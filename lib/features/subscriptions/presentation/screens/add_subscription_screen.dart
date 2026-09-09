@@ -14,16 +14,18 @@ class AddSubscriptionScreen extends ConsumerStatefulWidget {
 class _AddSubscriptionScreenState extends ConsumerState<AddSubscriptionScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
-  final _priceController = TextEditingController();
+  final _amountController = TextEditingController();
   final _categoryController = TextEditingController(text: 'General');
-  BillingPeriod _billingPeriod = BillingPeriod.monthly;
-  DateTime _nextBillingDate = DateTime.now().add(const Duration(days: 30));
+  final _notesController = TextEditingController();
+  String _billingFrequency = 'monthly';
+  DateTime _nextPaymentDate = DateTime.now().add(const Duration(days: 30));
 
   @override
   void dispose() {
     _nameController.dispose();
-    _priceController.dispose();
+    _amountController.dispose();
     _categoryController.dispose();
+    _notesController.dispose();
     super.dispose();
   }
 
@@ -32,10 +34,13 @@ class _AddSubscriptionScreenState extends ConsumerState<AddSubscriptionScreen> {
       final newSub = Subscription(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         name: _nameController.text.trim(),
-        price: double.parse(_priceController.text.trim()),
-        billingPeriod: _billingPeriod,
-        nextBillingDate: _nextBillingDate,
+        amount: double.parse(_amountController.text.trim()),
+        billingFrequency: _billingFrequency,
+        nextPaymentDate: _nextPaymentDate,
         category: _categoryController.text.trim(),
+        notes: _notesController.text.trim().isNotEmpty
+            ? _notesController.text.trim()
+            : null,
       );
 
       ref.read(subscriptionsListProvider.notifier).addSubscription(newSub);
@@ -66,17 +71,37 @@ class _AddSubscriptionScreenState extends ConsumerState<AddSubscriptionScreen> {
               ),
               const SizedBox(height: 16),
               TextFormField(
-                controller: _priceController,
-                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                controller: _amountController,
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 decoration: const InputDecoration(
-                  labelText: 'Price',
+                  labelText: 'Amount',
                   prefixText: '\$ ',
                   border: OutlineInputBorder(),
                 ),
                 validator: (value) {
-                  if (value == null || value.isEmpty) return 'Please enter price';
+                  if (value == null || value.isEmpty) return 'Please enter amount';
                   if (double.tryParse(value) == null) return 'Enter valid amount';
                   return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                value: _billingFrequency,
+                decoration: const InputDecoration(
+                  labelText: 'Billing Frequency',
+                  border: OutlineInputBorder(),
+                ),
+                dropdownColor: AppColors.surface,
+                items: const [
+                  DropdownMenuItem(value: 'weekly', child: Text('Weekly')),
+                  DropdownMenuItem(value: 'monthly', child: Text('Monthly')),
+                  DropdownMenuItem(value: 'quarterly', child: Text('Quarterly')),
+                  DropdownMenuItem(value: 'yearly', child: Text('Yearly')),
+                ],
+                onChanged: (value) {
+                  if (value != null) {
+                    setState(() => _billingFrequency = value);
+                  }
                 },
               ),
               const SizedBox(height: 16),
@@ -86,6 +111,15 @@ class _AddSubscriptionScreenState extends ConsumerState<AddSubscriptionScreen> {
                   labelText: 'Category',
                   border: OutlineInputBorder(),
                 ),
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _notesController,
+                decoration: const InputDecoration(
+                  labelText: 'Notes (Optional)',
+                  border: OutlineInputBorder(),
+                ),
+                maxLines: 2,
               ),
               const SizedBox(height: 24),
               ElevatedButton(

@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../domain/subscription_model.dart';
 
@@ -16,7 +17,9 @@ class SupabaseSubscriptionRepository implements SubscriptionRepository {
   @override
   Future<List<Subscription>> getSubscriptions() async {
     final response = await _client.from('subscriptions').select();
-    return (response as List).map((e) => Subscription.fromJson(e)).toList();
+    return (response as List)
+        .map((e) => Subscription.fromJson(e as Map<String, dynamic>))
+        .toList();
   }
 
   @override
@@ -37,3 +40,7 @@ class SupabaseSubscriptionRepository implements SubscriptionRepository {
     await _client.from('subscriptions').delete().eq('id', id);
   }
 }
+
+final subscriptionRepositoryProvider = Provider<SubscriptionRepository>((ref) {
+  return SupabaseSubscriptionRepository(Supabase.instance.client);
+});

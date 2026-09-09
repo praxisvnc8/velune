@@ -1,56 +1,63 @@
-enum BillingPeriod { monthly, yearly, weekly, quarterly }
-
 class Subscription {
   final String id;
+  final String? userId;
   final String name;
-  final double price;
+  final double amount;
   final String currency;
-  final BillingPeriod billingPeriod;
-  final DateTime nextBillingDate;
+  final String billingFrequency;
+  final DateTime nextPaymentDate;
   final String category;
-  final bool reminderEnabled;
-  final String? iconUrl;
+  final String? notes;
 
   const Subscription({
     required this.id,
+    this.userId,
     required this.name,
-    required this.price,
+    required this.amount,
     this.currency = 'USD',
-    required this.billingPeriod,
-    required this.nextBillingDate,
+    required this.billingFrequency,
+    required this.nextPaymentDate,
     required this.category,
-    this.reminderEnabled = true,
-    this.iconUrl,
+    this.notes,
   });
+
+  // Convenience getters for UI components
+  double get price => amount;
+  DateTime get nextBillingDate => nextPaymentDate;
 
   factory Subscription.fromJson(Map<String, dynamic> json) {
     return Subscription(
-      id: json['id'] as String,
-      name: json['name'] as String,
-      price: (json['price'] as num).toDouble(),
+      id: json['id'] as String? ?? '',
+      userId: json['user_id'] as String?,
+      name: json['name'] as String? ?? '',
+      amount: (json['amount'] as num?)?.toDouble() ??
+          (json['price'] as num?)?.toDouble() ??
+          0.0,
       currency: json['currency'] as String? ?? 'USD',
-      billingPeriod: BillingPeriod.values.firstWhere(
-        (e) => e.name == json['billing_period'],
-        orElse: () => BillingPeriod.monthly,
-      ),
-      nextBillingDate: DateTime.parse(json['next_billing_date'] as String),
+      billingFrequency: json['billing_frequency'] as String? ??
+          json['billing_period'] as String? ??
+          'monthly',
+      nextPaymentDate: json['next_payment_date'] != null
+          ? DateTime.parse(json['next_payment_date'] as String)
+          : (json['next_billing_date'] != null
+              ? DateTime.parse(json['next_billing_date'] as String)
+              : DateTime.now()),
       category: json['category'] as String? ?? 'General',
-      reminderEnabled: json['reminder_enabled'] as bool? ?? true,
-      iconUrl: json['icon_url'] as String?,
+      notes: json['notes'] as String?,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      if (userId != null) 'user_id': userId,
       'name': name,
-      'price': price,
+      'amount': amount,
       'currency': currency,
-      'billing_period': billingPeriod.name,
-      'next_billing_date': nextBillingDate.toIso8601String(),
+      'billing_frequency': billingFrequency,
+      'next_payment_date': nextPaymentDate.toIso8601String(),
       'category': category,
-      'reminder_enabled': reminderEnabled,
-      'icon_url': iconUrl,
+      if (notes != null) 'notes': notes,
     };
   }
 }

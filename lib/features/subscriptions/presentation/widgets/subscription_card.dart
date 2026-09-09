@@ -53,7 +53,7 @@ class SubscriptionCard extends StatelessWidget {
         subtitle: Padding(
           padding: const EdgeInsets.only(top: 4.0),
           child: Text(
-            'Renews ${dateFormat.format(subscription.nextBillingDate)} • ${subscription.category}',
+            'Renews ${dateFormat.format(subscription.nextPaymentDate)} • ${subscription.category}',
             style: Theme.of(context).textTheme.bodyMedium,
           ),
         ),
@@ -62,14 +62,14 @@ class SubscriptionCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
-              '\$${subscription.price.toStringAsFixed(2)}',
+              '\$${subscription.amount.toStringAsFixed(2)}',
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                     color: AppColors.accentGold,
                   ),
             ),
             const SizedBox(height: 2),
             Text(
-              '/${subscription.billingPeriod.name}',
+              '/${subscription.billingFrequency}',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     fontSize: 12,
                   ),

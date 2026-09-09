@@ -1,11 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../data/subscription_repository.dart';
 import '../../domain/subscription_model.dart';
-
-final subscriptionRepositoryProvider = Provider<SubscriptionRepository>((ref) {
-  return SupabaseSubscriptionRepository(Supabase.instance.client);
-});
 
 final subscriptionsListProvider =
     AsyncNotifierProvider<SubscriptionListNotifier, List<Subscription>>(() {
@@ -45,30 +40,41 @@ class SubscriptionListNotifier extends AsyncNotifier<List<Subscription>> {
     }
   }
 
+  Future<void> deleteSubscription(String id) async {
+    try {
+      await _repository.deleteSubscription(id);
+      await loadSubscriptions();
+    } catch (e) {
+      final current = state.value ?? [];
+      state = AsyncValue.data(current.where((s) => s.id != id).toList());
+    }
+  }
+
   static List<Subscription> _getDemoSubscriptions() {
     return [
       Subscription(
         id: '1',
         name: 'Spotify Premium',
-        price: 10.99,
-        billingPeriod: BillingPeriod.monthly,
-        nextBillingDate: DateTime.now().add(const Duration(days: 5)),
+        amount: 10.99,
+        billingFrequency: 'monthly',
+        nextPaymentDate: DateTime.now().add(const Duration(days: 5)),
         category: 'Music',
+        notes: 'Family plan',
       ),
       Subscription(
         id: '2',
         name: 'Netflix Ultra HD',
-        price: 19.99,
-        billingPeriod: BillingPeriod.monthly,
-        nextBillingDate: DateTime.now().add(const Duration(days: 12)),
+        amount: 19.99,
+        billingFrequency: 'monthly',
+        nextPaymentDate: DateTime.now().add(const Duration(days: 12)),
         category: 'Entertainment',
       ),
       Subscription(
         id: '3',
         name: 'iCloud Storage',
-        price: 2.99,
-        billingPeriod: BillingPeriod.monthly,
-        nextBillingDate: DateTime.now().add(const Duration(days: 18)),
+        amount: 2.99,
+        billingFrequency: 'monthly',
+        nextPaymentDate: DateTime.now().add(const Duration(days: 18)),
         category: 'Cloud',
       ),
     ];

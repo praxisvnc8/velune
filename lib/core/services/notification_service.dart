@@ -60,10 +60,10 @@ class NotificationService {
     if (reminderDate.isAfter(DateTime.now())) {
       try {
         await _notificationsPlugin.show(
-          notificationId,
-          title,
-          body,
-          notificationDetails,
+          id: notificationId,
+          title: title,
+          body: body,
+          notificationDetails: notificationDetails,
         );
       } catch (_) {
         // Fallback gracefully if system notification permissions or alarms are restricted
@@ -74,6 +74,6 @@ class NotificationService {
   /// Cancels any scheduled notification for a given subscription
   Future<void> cancelPaymentReminder(String subscriptionId) async {
     final notificationId = subscriptionId.hashCode.abs();
-    await _notificationsPlugin.cancel(notificationId);
+    await _notificationsPlugin.cancel(id: notificationId);
   }
 }

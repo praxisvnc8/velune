@@ -51,7 +51,7 @@ class SubscriptionsNotifier extends AsyncNotifier<List<Subscription>> {
   Future<void> addSubscription(Subscription sub) => add(sub);
 
   /// Updates a subscription with optimistic UI update and notification sync
-  Future<void> update(Subscription sub) async {
+  Future<void> updateSubscription(Subscription sub) async {
     final previousState = state;
     final currentList = state.value ?? [];
 
@@ -72,9 +72,6 @@ class SubscriptionsNotifier extends AsyncNotifier<List<Subscription>> {
       rethrow;
     }
   }
-
-  /// Alias for update
-  Future<void> updateSubscription(Subscription sub) => update(sub);
 
   /// Removes a subscription with optimistic UI update and cancels notification
   Future<void> remove(String id) async {

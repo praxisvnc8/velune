@@ -113,7 +113,7 @@ class SubscriptionDetailScreen extends ConsumerWidget {
     try {
       await ref
           .read(subscriptionsNotifierProvider.notifier)
-          .update(updatedSubscription);
+          .updateSubscription(updatedSubscription);
 
       if (context.mounted) {
         final message = updatedSubscription.isActive

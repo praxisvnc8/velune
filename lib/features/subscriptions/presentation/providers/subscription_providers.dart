@@ -8,27 +8,31 @@ final subscriptionRepositoryProvider = Provider<SubscriptionRepository>((ref) {
 });
 
 final subscriptionsListProvider =
-    StateNotifierProvider<SubscriptionListNotifier, AsyncValue<List<Subscription>>>((ref) {
-  final repo = ref.watch(subscriptionRepositoryProvider);
-  return SubscriptionListNotifier(repo);
+    AsyncNotifierProvider<SubscriptionListNotifier, List<Subscription>>(() {
+  return SubscriptionListNotifier();
 });
 
-class SubscriptionListNotifier extends StateNotifier<AsyncValue<List<Subscription>>> {
-  final SubscriptionRepository _repository;
+class SubscriptionListNotifier extends AsyncNotifier<List<Subscription>> {
+  late final SubscriptionRepository _repository;
 
-  SubscriptionListNotifier(this._repository) : super(const AsyncValue.loading()) {
-    loadSubscriptions();
+  @override
+  Future<List<Subscription>> build() async {
+    _repository = ref.watch(subscriptionRepositoryProvider);
+    return _fetchSubscriptions();
+  }
+
+  Future<List<Subscription>> _fetchSubscriptions() async {
+    try {
+      return await _repository.getSubscriptions();
+    } catch (e) {
+      // Fallback with demo data when Supabase is not configured yet
+      return _getDemoSubscriptions();
+    }
   }
 
   Future<void> loadSubscriptions() async {
     state = const AsyncValue.loading();
-    try {
-      final subscriptions = await _repository.getSubscriptions();
-      state = AsyncValue.data(subscriptions);
-    } catch (e, stack) {
-      // Fallback with demo data when Supabase is not configured yet
-      state = AsyncValue.data(_getDemoSubscriptions());
-    }
+    state = await AsyncValue.guard(() => _fetchSubscriptions());
   }
 
   Future<void> addSubscription(Subscription sub) async {

@@ -20,7 +20,9 @@ class NotificationService {
       iOS: iosSettings,
     );
 
-    await _notificationsPlugin.initialize(settings);
+    await _notificationsPlugin.initialize(
+      settings: settings,
+    );
   }
 
   Future<void> scheduleSubscriptionReminder({

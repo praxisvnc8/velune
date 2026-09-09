@@ -73,8 +73,6 @@ class AppTheme {
   // ---------------------------------------------------------------------------
 
   static ThemeData get darkTheme {
-    final TextTheme baseTextTheme = ThemeData.dark().textTheme;
-
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
@@ -94,7 +92,7 @@ class AppTheme {
 
       // Typography
       textTheme: TextTheme(
-        // High-impact numbers and display headers using Cinzel / Playfair Display
+        // High-impact numbers and display headers using Cinzel
         displayLarge: GoogleFonts.cinzel(
           fontSize: 40,
           fontWeight: FontWeight.w600,
@@ -182,7 +180,6 @@ class AppTheme {
       // App Bar Theme
       appBarTheme: AppBarTheme(
         backgroundColor: AppColors.background,
-        scaffoldBackgroundColor: AppColors.background,
         elevation: 0,
         centerTitle: true,
         surfaceTintColor: Colors.transparent,
@@ -196,7 +193,7 @@ class AppTheme {
       ),
 
       // Card Theme
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: AppColors.card,
         elevation: 0,
         margin: EdgeInsets.zero,
@@ -306,7 +303,7 @@ class AppTheme {
           borderRadius: BorderRadius.vertical(top: Radius.circular(radiusXLarge)),
         ),
       ),
-      dialogTheme: DialogTheme(
+      dialogTheme: DialogThemeData(
         backgroundColor: AppColors.surfaceElevated,
         shape: RoundedRectangleBorder(
           borderRadius: borderRadiusLarge,

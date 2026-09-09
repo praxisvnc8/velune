@@ -1,28 +1,33 @@
 import 'package:flutter/material.dart';
 
-/// VELUNE Palette: Premium, calm, minimal, elegant, mysterious.
+/// VELUNE Palette: Deep, calm, minimal, elegant, and mysterious.
 abstract class AppColors {
-  // Backgrounds - Obsidian & Deep Void
-  static const Color background = Color(0FF0B0C10);
-  static const Color surface = Color(0FF14161D);
-  static const Color surfaceVariant = Color(0FF1C1E27);
-  static const Color card = Color(0FF171922);
+  // Backgrounds - Obsidian, Deep Void & Slate
+  static const Color background = Color(0FF08090C);
+  static const Color surface = Color(0FF12141C);
+  static const Color surfaceElevated = Color(0FF181B26);
+  static const Color card = Color(0FF141722);
+  static const Color cardHover = Color(0FF1C202E);
 
-  // Accents - Champagne Gold & Celestial Silver
+  // Accents - Champagne Gold, Muted Bronze & Celestial Platinum
   static const Color accentGold = Color(0FFE2C97F);
   static const Color accentGoldMuted = Color(0FF9A8550);
+  static const Color accentChampagne = Color(0FFF1E5C8);
   static const Color accentSilver = Color(0FFE0E2EC);
+  static const Color accentPlatinum = Color(0FF989EAF);
 
   // Text Colors
-  static const Color textPrimary = Color(0FFF5F5F7);
-  static const Color textSecondary = Color(0FF9498A8);
-  static const Color textMuted = Color(0FF5E6272);
+  static const Color textPrimary = Color(0FFF8F9FA);
+  static const Color textSecondary = Color(0xFFA0A5B5);
+  static const Color textMuted = Color(0FF60667A);
 
   // Borders & Dividers
-  static const Color border = Color(0FF252836);
-  static const Color divider = Color(0FF1E212D);
+  static const Color border = Color(0FF1E2230);
+  static const Color borderFocused = Color(0FFE2C97F);
+  static const Color divider = Color(0FF181B28);
 
-  // Status Colors
+  // Status & Subtle Feedback
   static const Color error = Color(0FFE57373);
   static const Color success = Color(0FF81C784);
+  static const Color warning = Color(0FFFFB74D);
 }

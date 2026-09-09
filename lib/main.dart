@@ -1,20 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'core/constants/supabase_constants.dart';
+import 'core/services/notification_service.dart';
+import 'core/theme/app_theme.dart';
+import 'features/navigation/presentation/main_navigation_screen.dart';
+
 Future<void> main() async {
-  // Ensure Flutter bindings are initialized before calling Supabase
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Supabase
+  // Initialize Notification Service
+  await NotificationService().initialize();
+
+  // Initialize Supabase Backend
   await Supabase.initialize(
-    url: 'YOUR_SUPABASE_URL', // Paste your Project URL here
-    anonKey: 'YOUR_SUPABASE_ANON_KEY', // Paste your anon key here
+    url: SupabaseConstants.url, // Placeholder: Replace with actual Supabase URL
+    anonKey: SupabaseConstants.anonKey, // Placeholder: Replace with actual Anon Key
   );
 
-  runApp(const VeluneApp());
+  runApp(
+    const ProviderScope(
+      child: VeluneApp(),
+    ),
+  );
 }
 
-// A handy variable to use the Supabase client anywhere in your app
+/// Convenience getter for the global Supabase client instance
 final supabase = Supabase.instance.client;
 
 class VeluneApp extends StatelessWidget {
@@ -24,15 +36,9 @@ class VeluneApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'VELUNE',
-      theme: ThemeData(
-        brightness: Brightness.dark,
-        // We will build the premium theme later
-      ),
-      home: const Scaffold(
-        body: Center(
-          child: Text('VELUNE Backend Initialized'),
-        ),
-      ),
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.darkTheme,
+      home: const MainNavigationScreen(),
     );
   }
 }

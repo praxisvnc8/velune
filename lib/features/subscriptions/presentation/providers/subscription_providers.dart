@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/services/notification_service.dart';
 import '../../data/subscription_repository.dart';
 import '../../domain/subscription_model.dart';
 
@@ -14,14 +15,21 @@ class SubscriptionsNotifier extends AsyncNotifier<List<Subscription>> {
 
   Future<List<Subscription>> _fetchSubscriptions() async {
     try {
-      return await _repository.getSubscriptions();
+      final list = await _repository.getSubscriptions();
+      // Schedule reminders for active loaded subscriptions
+      for (final sub in list) {
+        if (sub.isActive) {
+          NotificationService().schedulePaymentReminder(sub, 3);
+        }
+      }
+      return list;
     } catch (e) {
       // Fallback with demo data when Supabase is not configured yet
       return _getDemoSubscriptions();
     }
   }
 
-  /// Adds a subscription with optimistic UI update
+  /// Adds a subscription with optimistic UI update and notification scheduling
   Future<void> add(Subscription sub) async {
     final previousState = state;
     final currentList = state.value ?? [];
@@ -31,6 +39,7 @@ class SubscriptionsNotifier extends AsyncNotifier<List<Subscription>> {
 
     try {
       await _repository.addSubscription(sub);
+      await NotificationService().schedulePaymentReminder(sub, 3);
     } catch (e) {
       // Revert on error
       state = previousState;
@@ -41,7 +50,7 @@ class SubscriptionsNotifier extends AsyncNotifier<List<Subscription>> {
   /// Alias for add
   Future<void> addSubscription(Subscription sub) => add(sub);
 
-  /// Updates a subscription with optimistic UI update
+  /// Updates a subscription with optimistic UI update and notification sync
   Future<void> update(Subscription sub) async {
     final previousState = state;
     final currentList = state.value ?? [];
@@ -53,6 +62,11 @@ class SubscriptionsNotifier extends AsyncNotifier<List<Subscription>> {
 
     try {
       await _repository.updateSubscription(sub);
+      if (sub.isActive) {
+        await NotificationService().schedulePaymentReminder(sub, 3);
+      } else {
+        await NotificationService().cancelPaymentReminder(sub.id);
+      }
     } catch (e) {
       state = previousState;
       rethrow;
@@ -62,7 +76,7 @@ class SubscriptionsNotifier extends AsyncNotifier<List<Subscription>> {
   /// Alias for update
   Future<void> updateSubscription(Subscription sub) => update(sub);
 
-  /// Removes a subscription with optimistic UI update
+  /// Removes a subscription with optimistic UI update and cancels notification
   Future<void> remove(String id) async {
     final previousState = state;
     final currentList = state.value ?? [];
@@ -74,6 +88,7 @@ class SubscriptionsNotifier extends AsyncNotifier<List<Subscription>> {
 
     try {
       await _repository.deleteSubscription(id);
+      await NotificationService().cancelPaymentReminder(id);
     } catch (e) {
       state = previousState;
       rethrow;
@@ -134,6 +149,8 @@ final totalMonthlySpendingProvider = Provider<double>((ref) {
   return subscriptionsAsync.maybeWhen(
     data: (subscriptions) {
       return subscriptions.fold<double>(0.0, (total, sub) {
+        if (!sub.isActive) return total;
+
         switch (sub.billingFrequency.toLowerCase()) {
           case 'weekly':
             return total + (sub.amount * 52 / 12);
@@ -163,7 +180,7 @@ final activeSubscriptionCountProvider = Provider<int>((ref) {
   final subscriptionsAsync = ref.watch(subscriptionsNotifierProvider);
 
   return subscriptionsAsync.maybeWhen(
-    data: (subscriptions) => subscriptions.length,
+    data: (subscriptions) => subscriptions.where((s) => s.isActive).length,
     orElse: () => 0,
   );
 });
@@ -174,9 +191,10 @@ final upcomingPaymentsProvider = Provider<List<Subscription>>((ref) {
 
   return subscriptionsAsync.maybeWhen(
     data: (subscriptions) {
-      final sortedList = List<Subscription>.from(subscriptions);
-      sortedList.sort((a, b) => a.nextPaymentDate.compareTo(b.nextPaymentDate));
-      return sortedList;
+      final activeList =
+          subscriptions.where((s) => s.isActive).toList();
+      activeList.sort((a, b) => a.nextPaymentDate.compareTo(b.nextPaymentDate));
+      return activeList;
     },
     orElse: () => [],
   );

@@ -6,6 +6,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../providers/subscription_providers.dart';
 import '../widgets/subscription_card.dart';
 import 'add_subscription_screen.dart';
+import 'subscription_detail_screen.dart';
 
 /// VELUNE Dashboard Screen: A calm, spacious, and minimalist overview of recurring commitments.
 class DashboardScreen extends ConsumerWidget {
@@ -234,7 +235,13 @@ class DashboardScreen extends ConsumerWidget {
                             child: SubscriptionCard(
                               subscription: subscription,
                               onTap: () {
-                                // Detailed view navigation placeholder
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => SubscriptionDetailScreen(
+                                      subscription: subscription,
+                                    ),
+                                  ),
+                                );
                               },
                             ),
                           ),

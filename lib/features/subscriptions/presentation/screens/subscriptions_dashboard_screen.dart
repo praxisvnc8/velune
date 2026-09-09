@@ -10,7 +10,10 @@ class SubscriptionsDashboardScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final subscriptionsState = ref.watch(subscriptionsListProvider);
+    final subscriptionsState = ref.watch(subscriptionsNotifierProvider);
+    final totalMonthly = ref.watch(totalMonthlySpendingProvider);
+    final activeCount = ref.watch(activeSubscriptionCountProvider);
+    final upcomingSubscriptions = ref.watch(upcomingPaymentsProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -26,12 +29,7 @@ class SubscriptionsDashboardScreen extends ConsumerWidget {
             style: const TextStyle(color: AppColors.error),
           ),
         ),
-        data: (subscriptions) {
-          final totalMonthly = subscriptions.fold<double>(
-            0.0,
-            (sum, item) => sum + item.price,
-          );
-
+        data: (_) {
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20.0),
             child: CustomScrollView(
@@ -41,7 +39,7 @@ class SubscriptionsDashboardScreen extends ConsumerWidget {
                     margin: const EdgeInsets.symmetric(vertical: 20),
                     padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
+                      gradient: const LinearGradient(
                         colors: [
                           AppColors.surfaceVariant,
                           AppColors.card,
@@ -71,7 +69,7 @@ class SubscriptionsDashboardScreen extends ConsumerWidget {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          '${subscriptions.length} active recurring subscriptions',
+                          '$activeCount active recurring subscriptions',
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ],
@@ -93,10 +91,10 @@ class SubscriptionsDashboardScreen extends ConsumerWidget {
                 SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
-                      final sub = subscriptions[index];
+                      final sub = upcomingSubscriptions[index];
                       return SubscriptionCard(subscription: sub);
                     },
-                    childCount: subscriptions.length,
+                    childCount: upcomingSubscriptions.length,
                   ),
                 ),
                 const SliverToBoxAdapter(child: SizedBox(height: 80)),

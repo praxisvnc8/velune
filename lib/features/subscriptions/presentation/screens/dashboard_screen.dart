@@ -229,7 +229,7 @@ class DashboardScreen extends ConsumerWidget {
                       (context, index) {
                         final subscription = upcomingPayments[index];
                         return Hero(
-                          tag: 'sub_${subscription.id}',
+                          tag: 'sub-card-${subscription.id}',
                           child: Material(
                             color: Colors.transparent,
                             child: SubscriptionCard(
@@ -259,28 +259,25 @@ class DashboardScreen extends ConsumerWidget {
       ),
 
       // Add Subscription Floating Action Button
-      floatingActionButton: Hero(
-        tag: 'add_subscription_fab',
-        child: FloatingActionButton.extended(
-          onPressed: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (_) => const AddSubscriptionScreen(),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => const AddSubscriptionScreen(),
+            ),
+          );
+        },
+        backgroundColor: AppColors.accentGold,
+        foregroundColor: AppColors.background,
+        elevation: 4,
+        icon: const Icon(Icons.add, size: 20),
+        label: Text(
+          'NEW SUBSCRIPTION',
+          style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                color: AppColors.background,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1.2,
               ),
-            );
-          },
-          backgroundColor: AppColors.accentGold,
-          foregroundColor: AppColors.background,
-          elevation: 4,
-          icon: const Icon(Icons.add, size: 20),
-          label: Text(
-            'NEW SUBSCRIPTION',
-            style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  color: AppColors.background,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1.2,
-                ),
-          ),
         ),
       ),
     );

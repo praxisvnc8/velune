@@ -141,7 +141,7 @@ class _SubscriptionListScreenState extends ConsumerState<SubscriptionListScreen>
                         final subscription = filteredSubscriptions[index];
 
                         return Hero(
-                          tag: 'sub_${subscription.id}',
+                          tag: 'sub-card-${subscription.id}',
                           child: Material(
                             color: Colors.transparent,
                             child: SubscriptionCard(

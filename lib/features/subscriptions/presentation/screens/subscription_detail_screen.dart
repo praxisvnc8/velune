@@ -169,15 +169,15 @@ class SubscriptionDetailScreen extends ConsumerWidget {
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
           padding: AppTheme.edgeInsetsScreen,
-          child: Hero(
-            tag: 'sub_${subscription.id}',
-            child: Material(
-              color: Colors.transparent,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Header Hero Avatar & Status Banner
-                  Container(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header Hero Avatar & Status Banner
+              Hero(
+                tag: 'sub-card-${subscription.id}',
+                child: Material(
+                  color: Colors.transparent,
+                  child: Container(
                     padding: AppTheme.edgeInsetsCard,
                     decoration: BoxDecoration(
                       color: AppColors.card,
@@ -290,134 +290,134 @@ class SubscriptionDetailScreen extends ConsumerWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 24),
+                ),
+              ),
+              const SizedBox(height: 24),
 
-                  // Calculated Financial Impact Card
-                  Text(
-                    'CALCULATED IMPACT',
-                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                          color: AppColors.textSecondary,
-                          letterSpacing: 1.8,
-                        ),
-                  ),
-                  const SizedBox(height: 12),
-                  Container(
-                    padding: AppTheme.edgeInsetsCard,
-                    decoration: BoxDecoration(
-                      color: AppColors.surface,
-                      borderRadius: AppTheme.borderRadiusLarge,
-                      border: Border.all(color: AppColors.border),
+              // Calculated Financial Impact Card
+              Text(
+                'CALCULATED IMPACT',
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      color: AppColors.textSecondary,
+                      letterSpacing: 1.8,
                     ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: _ImpactTile(
-                            label: 'ESTIMATED MONTHLY',
-                            value: formattedMonthly,
-                          ),
-                        ),
-                        Container(
-                          width: 1,
-                          height: 40,
-                          color: AppColors.divider,
-                        ),
-                        Expanded(
-                          child: _ImpactTile(
-                            label: 'ESTIMATED YEARLY',
-                            value: formattedYearly,
-                            alignment: CrossAxisAlignment.end,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Details Grid
-                  Text(
-                    'COMMITMENT DETAILS',
-                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                          color: AppColors.textSecondary,
-                          letterSpacing: 1.8,
-                        ),
-                  ),
-                  const SizedBox(height: 12),
-                  Container(
-                    padding: AppTheme.edgeInsetsCard,
-                    decoration: BoxDecoration(
-                      color: AppColors.surface,
-                      borderRadius: AppTheme.borderRadiusLarge,
-                      border: Border.all(color: AppColors.border),
-                    ),
-                    child: Column(
-                      children: [
-                        _DetailRow(
-                          icon: Icons.calendar_today_outlined,
-                          label: 'Next Payment Date',
-                          value: dateFormat.format(subscription.nextPaymentDate),
-                        ),
-                        const Divider(color: AppColors.divider, height: 24),
-                        _DetailRow(
-                          icon: Icons.category_outlined,
-                          label: 'Category',
-                          value: subscription.category,
-                        ),
-                        const Divider(color: AppColors.divider, height: 24),
-                        _DetailRow(
-                          icon: Icons.repeat,
-                          label: 'Billing Cycle',
-                          value: subscription.billingFrequency.toUpperCase(),
-                        ),
-                        if (subscription.notes != null &&
-                            subscription.notes!.isNotEmpty) ...[
-                          const Divider(color: AppColors.divider, height: 24),
-                          _DetailRow(
-                            icon: Icons.notes_outlined,
-                            label: 'Notes',
-                            value: subscription.notes!,
-                          ),
-                        ],
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 32),
-
-                  // Actions Row (Pause/Resume & Delete)
-                  Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton.icon(
-                          onPressed: () => _togglePauseStatus(context, ref),
-                          icon: Icon(
-                            subscription.isActive
-                                ? Icons.pause_circle_outline
-                                : Icons.play_circle_outline,
-                            size: 18,
-                          ),
-                          label: Text(
-                            subscription.isActive ? 'PAUSE' : 'RESUME',
-                          ),
-                        ),
+              ),
+              const SizedBox(height: 12),
+              Container(
+                padding: AppTheme.edgeInsetsCard,
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: AppTheme.borderRadiusLarge,
+                  border: Border.all(color: AppColors.border),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: _ImpactTile(
+                        label: 'ESTIMATED MONTHLY',
+                        value: formattedMonthly,
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.error,
-                            foregroundColor: AppColors.textPrimary,
-                          ),
-                          onPressed: () =>
-                              _showDeleteConfirmationDialog(context, ref),
-                          icon: const Icon(Icons.delete_outline, size: 18),
-                          label: const Text('DELETE'),
-                        ),
+                    ),
+                    Container(
+                      width: 1,
+                      height: 40,
+                      color: AppColors.divider,
+                    ),
+                    Expanded(
+                      child: _ImpactTile(
+                        label: 'ESTIMATED YEARLY',
+                        value: formattedYearly,
+                        alignment: CrossAxisAlignment.end,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+
+              // Details Grid
+              Text(
+                'COMMITMENT DETAILS',
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      color: AppColors.textSecondary,
+                      letterSpacing: 1.8,
+                    ),
+              ),
+              const SizedBox(height: 12),
+              Container(
+                padding: AppTheme.edgeInsetsCard,
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: AppTheme.borderRadiusLarge,
+                  border: Border.all(color: AppColors.border),
+                ),
+                child: Column(
+                  children: [
+                    _DetailRow(
+                      icon: Icons.calendar_today_outlined,
+                      label: 'Next Payment Date',
+                      value: dateFormat.format(subscription.nextPaymentDate),
+                    ),
+                    const Divider(color: AppColors.divider, height: 24),
+                    _DetailRow(
+                      icon: Icons.category_outlined,
+                      label: 'Category',
+                      value: subscription.category,
+                    ),
+                    const Divider(color: AppColors.divider, height: 24),
+                    _DetailRow(
+                      icon: Icons.repeat,
+                      label: 'Billing Cycle',
+                      value: subscription.billingFrequency.toUpperCase(),
+                    ),
+                    if (subscription.notes != null &&
+                        subscription.notes!.isNotEmpty) ...[
+                      const Divider(color: AppColors.divider, height: 24),
+                      _DetailRow(
+                        icon: Icons.notes_outlined,
+                        label: 'Notes',
+                        value: subscription.notes!,
                       ),
                     ],
+                  ],
+                ),
+              ),
+              const SizedBox(height: 32),
+
+              // Actions Row (Pause/Resume & Delete)
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () => _togglePauseStatus(context, ref),
+                      icon: Icon(
+                        subscription.isActive
+                            ? Icons.pause_circle_outline
+                            : Icons.play_circle_outline,
+                        size: 18,
+                      ),
+                      label: Text(
+                        subscription.isActive ? 'PAUSE' : 'RESUME',
+                      ),
+                    ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.error,
+                        foregroundColor: AppColors.textPrimary,
+                      ),
+                      onPressed: () =>
+                          _showDeleteConfirmationDialog(context, ref),
+                      icon: const Icon(Icons.delete_outline, size: 18),
+                      label: const Text('DELETE'),
+                    ),
+                  ),
                 ],
               ),
-            ),
+              const SizedBox(height: 24),
+            ],
           ),
         ),
       ),
